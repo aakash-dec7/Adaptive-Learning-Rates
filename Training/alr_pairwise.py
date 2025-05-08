@@ -22,7 +22,7 @@ class TrainModel:
         logger.info(f"Using device: {self.device}")
 
         # Load pretrained model
-        self.model = LoadModel(model_dir="Model/TrainedModel/ALR_Pair").to(self.device)
+        self.model = LoadModel(model_dir="Model/TrainedModel/ALR_Pairwise").to(self.device)
         logger.info("Model loaded and moved to device.")
 
         # Load tokenizer
@@ -166,7 +166,7 @@ class TrainModel:
 
         # Save trained model
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_dir = "Model/TrainedModel/ALR_Pair"
+        save_dir = "Model/TrainedModel/ALR_Pairwise"
         os.makedirs(save_dir, exist_ok=True)
         save_path = os.path.join(save_dir, f"{timestamp}.pth")
 
