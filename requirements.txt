@@ -1,0 +1,11 @@
+nltk
+pandas
+evaluate
+faiss_cpu
+tokenizers
+bert-score
+rouge-score
+transformers
+sentence-transformers
+dvc
+-e .
