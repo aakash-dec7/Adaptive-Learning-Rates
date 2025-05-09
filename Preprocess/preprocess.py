@@ -14,6 +14,7 @@ class PreprocessTrainData:
         """
         self.file_path = file_path
         self.tokenizer = AutoTokenizer.from_pretrained("Tokenizer/Custom")
+        self.eos_token = self.tokenizer.decode(self.tokenizer.eos_token_id)
 
         logger.info("Initialized PreprocessTrainData.")
 
@@ -52,7 +53,7 @@ class PreprocessTrainData:
                 continue
 
             # Construct the full sequence: user prompt + assistant response
-            full_text = f"<|user|> {inp} <|assistant|> {out}"
+            full_text = f"<|user|> {inp} <|assistant|> {out} {self.eos_token}"
             full_text_list.append(full_text)
 
             # Tokenize full text sequence
