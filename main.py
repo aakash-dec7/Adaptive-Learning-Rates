@@ -15,40 +15,24 @@ def main():
     dataset_loader = LoadDataset()
     dataset_loader.load_and_preprocess()
 
-    del dataset_loader
-    torch.cuda.empty_cache()
-
     # Step 2: Configure Tokenizer
     customize_and_save_tokenizer()
-
-    torch.cuda.empty_cache()
 
     # Step 3: Preprocess dataset
     preprocessor = PreprocessTrainData()
     preprocessor.preprocess_train_data()
 
-    torch.cuda.empty_cache()
-
     # Step 4: Train model
     train_no_alr = Train_Step_LR()
     no_alr_loss, no_alr_LR = train_no_alr.forward()
-
-    del train_no_alr
-    torch.cuda.empty_cache()
 
     # Step 5: Train model
     train_alr = Train_ALR()
     alr_loss, alr_LR = train_alr.forward()
 
-    del train_alr
-    torch.cuda.empty_cache()
-
     # Step 6: Train model
     train_alr_pair = Train_ALR_Pairwise()
     alr_pair_loss, alr_pair_LR = train_alr_pair.forward()
-
-    del train_alr_pair
-    torch.cuda.empty_cache()
 
     # Step 7: Save Loss and LR as CSV
     max_len_lr = max(len(no_alr_LR), len(alr_LR), len(alr_pair_LR))
