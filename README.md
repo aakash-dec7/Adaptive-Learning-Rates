@@ -22,7 +22,6 @@ The ALRScheduler automatically adjusts the learning rate during training based o
 
     ```python
     self.grad_norm_avg = self.norm_smoothing * self.grad_norm_avg + (1 - self.norm_smoothing) * max(grad_norm, 1e-6)
-
     self.act_norm_avg = self.norm_smoothing * self.act_norm_avg + (1 - self.norm_smoothing) * max(act_norm, 1e-6)
     ```
 
