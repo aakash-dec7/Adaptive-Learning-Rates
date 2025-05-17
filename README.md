@@ -12,11 +12,11 @@ Only two consecutive layers are trained per batch, with the active pair rotating
 
 ## Adaptive Learning Rate (ALR)
 
-The ALRScheduler automatically adjusts the learning rate during training based on the model’s gradient and activation values. This helps make training more stable and efficient, especially for deep transformer models.
+The `ALRScheduler` automatically adjusts the learning rate during training based on the model’s gradient and activation values. This helps make training more stable and efficient, especially for deep transformer models.
 
 ### How It Works
 
-1. **Track moving averages of norms**
+1. **Track moving averages of norms:**
 
     To stabilize learning rate updates, ALR maintains exponential moving averages of the gradient norm (`grad_norm_avg`) and the activation norm (`act_norm_avg`). These averages serve as historical baselines to normalize current norm values:
 
@@ -25,7 +25,7 @@ The ALRScheduler automatically adjusts the learning rate during training based o
     self.act_norm_avg = self.norm_smoothing * self.act_norm_avg + (1 - self.norm_smoothing) * max(act_norm, 1e-6)
     ```
 
-2. **Normalize current norms**
+2. **Normalize current norms:**
 
     Current gradient and activation norms are normalized by dividing by their respective moving averages:
 
@@ -34,7 +34,7 @@ The ALRScheduler automatically adjusts the learning rate during training based o
     act_norm_norm = act_norm / max(self.act_norm_avg, 1e-6)
     ```
 
-3. **Apply sigmoid scaling**
+3. **Apply sigmoid scaling:**
 
     The normalized norms are passed through a sigmoid function to bound the values between 0 and 1, smoothing extreme variations:
 
@@ -46,7 +46,7 @@ The ALRScheduler automatically adjusts the learning rate during training based o
     s_a = self.sigmoid(act_norm_norm)
     ```
 
-4. **Combine scores and compute learning rate scale**
+4. **Combine scores and compute learning rate scale:**
 
     A weighted average of the gradient and activation scores produces a combined score:
 
@@ -60,7 +60,7 @@ The ALRScheduler automatically adjusts the learning rate during training based o
     lr_scale = 1.0 / (1.0 + combined_score)
     ```
 
-5. **Calculate and smooth learning rate**
+5. **Calculate and smooth learning rate:**
 
     The raw learning rate is computed by scaling the base learning rate and clamping it within specified min and max bounds:
 
@@ -75,7 +75,7 @@ The ALRScheduler automatically adjusts the learning rate during training based o
     self.current_lr = (1 - self.smoothing) *self.current_lr + self.smoothing* raw_lr
     ```
 
-6. **Apply to optimizer**
+6. **Apply to optimizer:**
 
     Finally, the new learning rate is applied to all parameter groups of the optimizer:
 
@@ -87,8 +87,8 @@ The ALRScheduler automatically adjusts the learning rate during training based o
 ### Example Usage in Training Loop
 
 ```python
-grad_norm = compute_gradient_norm(model) 
-act_norm = compute_activation_norm(model)  
+grad_norm = self.get_gradient_norm()
+act_norm = self.get_activation_norm(activations) 
 
 alr_scheduler.update_learning_rate(grad_norm, act_norm)
 ```
@@ -101,9 +101,9 @@ This mechanism enables focused training on two overlapping decoder layers at a t
 
 ### How It Works
 
-1. **Select only two layers for training**
+1. **Select only two layers for training:**
 
-    The train_next_decoder_pair() method activates gradient updates only for the current pair: current_layer and current_layer + 1. All other decoder layers are frozen.
+    The `train_next_decoder_pair()` method activates gradient updates only for the current pair: `current_layer` and `current_layer + 1`. All other decoder layers are frozen.
 
     ```python
     for i, layer in enumerate(self.model.decoder.layers):
@@ -114,9 +114,9 @@ This mechanism enables focused training on two overlapping decoder layers at a t
 
     This ensures that just two consecutive layers are trained at a time, allowing precise control over layer updates.
 
-2. **Cycle through layer pairs**
+2. **Cycle through layer pairs:**
 
-    The switch_pair() method advances the current training pair in a cyclic manner. Once the last valid pair (N-2, N-1) is reached, it wraps around to (0,1), N is the number of layers:
+    The `switch_pair()` method advances the current training pair in a cyclic manner. Once the last valid pair (N-2, N-1) is reached, it wraps around to (0,1), N is the number of layers:
 
     ```python
     if self.current_layer >= len(self.model.decoder.layers) - 2:
@@ -158,7 +158,7 @@ Experiments on datasets containing 5,000 and 10,000 samples demonstrate that the
 
     ![alt text](Plot/5000_Loss.png)
     **Training Loss Analysis:**</br>
-    Among the three methods, ALR-Pairwise demonstrates the most stable and consistent training loss curve, with a smooth and steady decline throughout the training process. In contrast, Step-LR shows an initially sharp drop in loss, followed by increasing fluctuations, indicating instability as the fixed-step schedule fails to align with the model's learning dynamics. ALR offers a middle ground, with a generally steady decrease in loss but occasional irregularities due to simultaneous adaptive updates across all layers.
+    Among the three methods, **ALR-Pairwise** demonstrates the most stable and consistent training loss curve, with a smooth and steady decline throughout the training process. In contrast, **Step-LR** shows an initially sharp drop in loss, followed by increasing fluctuations, indicating instability as the fixed-step schedule fails to align with the model's learning dynamics. **ALR** offers a middle ground, with a generally steady decrease in loss but occasional irregularities due to simultaneous adaptive updates across all layers.
 
      ![alt text](Plot/5000_LR.png)
     **Learning Rate Behavior:**</br>
