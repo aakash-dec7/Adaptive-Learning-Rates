@@ -14,6 +14,7 @@ class PreprocessTrainData:
         """
         self.file_path = file_path
         self.tokenizer = AutoTokenizer.from_pretrained("Tokenizer/Custom")
+        self.bos_token = self.tokenizer.decode(self.tokenizer.bos_token_id)
         self.eos_token = self.tokenizer.decode(self.tokenizer.eos_token_id)
 
         logger.info("Initialized PreprocessTrainData.")
@@ -53,7 +54,9 @@ class PreprocessTrainData:
                 continue
 
             # Construct the full sequence: user prompt + assistant response
-            full_text = f"<|user|> {inp} <|assistant|> {out} {self.eos_token}"
+            full_text = (
+                f"{self.bos_token} <|user|> {inp} <|assistant|> {out} {self.eos_token}"
+            )
             full_text_list.append(full_text)
 
             # Tokenize full text sequence
@@ -63,6 +66,7 @@ class PreprocessTrainData:
                 padding="max_length",
                 truncation=True,
                 return_tensors="pt",
+                add_special_tokens=False,
             )
 
             input_ids = tokenized["input_ids"][0]  # Shape: [max_length]
@@ -70,12 +74,12 @@ class PreprocessTrainData:
 
             # Create labels for causal language modeling (shift for next token prediction)
             labels = input_ids.clone()  # Copy the input IDs to create labels
-            labels[:-1] = input_ids[
-                1:
-            ]  # Shift all tokens one position left (next token prediction)
-            labels[-1] = (
-                self.tokenizer.pad_token_id
-            )  # Last token has no target, set to pad_token_id
+
+            # Shift all tokens one position left (next token prediction)
+            labels[:-1] = input_ids[1:]
+
+            # Last token has no target, set to pad_token_id
+            labels[-1] = self.tokenizer.pad_token_id
 
             # Mask user prompt (tokens before <|assistant|>) with pad_token_id
             try:

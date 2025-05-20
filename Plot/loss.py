@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 
 
-def plot_loss_comparison(loss_lists, labels, title="Training Loss Comparison"):
+def plot_loss_comparison(
+    loss_lists, labels, title="Training Loss Comparison for 10,000 Samples"
+):
     """
     Plots loss curves for different training methods.
     """

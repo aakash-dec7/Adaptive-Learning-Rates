@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 
 
-def plot_lr_comparison(lr_lists, labels, title="Learning Rate Comparison"):
+def plot_lr_comparison(
+    lr_lists, labels, title="Learning Rate Comparison for 10,000 Samples"
+):
     """
     Plots learning rate curves for different training methods.
     """

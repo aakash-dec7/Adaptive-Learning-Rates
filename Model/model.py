@@ -72,6 +72,8 @@ class DecTransformer(nn.Module):
 
         self.tokenizer = AutoTokenizer.from_pretrained("Tokenizer/Custom")
         self.vocab_size = len(self.tokenizer)
+
+        self.bos_token = self.tokenizer.decode(self.tokenizer.bos_token_id)
         self.eos_token_id = self.tokenizer.eos_token_id
         logger.info("Tokenizer loaded successfully.")
 
@@ -147,7 +149,7 @@ class DecTransformer(nn.Module):
 
     def generate(self, input_text, top_k=50, max_length=50, temperature=0.7):
         self.eval()
-        prompt = f"<|user|> {input_text} <|assistant|> "
+        prompt = f"{self.bos_token} <|user|> {input_text} <|assistant|> "
 
         with torch.no_grad():
             tokenized = self.tokenizer(
@@ -156,6 +158,7 @@ class DecTransformer(nn.Module):
                 truncation=True,
                 max_length=self.max_position_embeddings,
                 padding=True,
+                add_special_tokens=False,
             )
             input_ids = tokenized.input_ids.to(self.device)
             attention_mask = tokenized.attention_mask.to(self.device)
