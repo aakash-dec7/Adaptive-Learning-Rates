@@ -127,8 +127,6 @@ class DecTransformer(nn.Module):
 
         for idx, layer in enumerate(self.decoder.layers):
             x = layer(x, attn_mask=attn_mask, key_padding_mask=key_padding_mask)
-            act_norm = x.norm(p=2, dim=-1).mean().item()
-            # print(f"Layer {idx} activation L2 norm: {act_norm:.4f}")
             if return_activations:
                 activations.append(x.detach())
 
