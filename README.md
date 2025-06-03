@@ -156,22 +156,22 @@ Experiments on datasets containing 5,000 and 10,000 samples demonstrate that the
 
 - ### Results on 5,000 Samples
 
-    ![alt text](Plot/5000_Loss.png)
     **Training Loss Analysis:**</br>
+    ![alt text](Plot/5000_Loss.png)
     Among the three methods, **ALR-Pairwise** demonstrates the most stable and consistent training loss curve, with a smooth and steady decline throughout the training process. In contrast, **Step-LR** shows an initially sharp drop in loss, followed by increasing fluctuations, indicating instability as the fixed-step schedule fails to align with the model's learning dynamics. **ALR** offers a middle ground, with a generally steady decrease in loss but occasional irregularities due to simultaneous adaptive updates across all layers.
 
-     ![alt text](Plot/5000_LR.png)
     **Learning Rate Behavior:**</br>
+     ![alt text](Plot/5000_LR.png)
     Step-LR follows a rigid schedule with abrupt drops that ignore the model’s actual learning progress, potentially stalling improvement. ALR, by contrast, adjusts the learning rate more gradually based on the model’s performance, promoting continuous learning. ALR-Pairwise further refines this approach by tailoring adjustments to specific layer pairs, resulting in the most balanced and efficient learning rate transitions without sharp jumps or unnecessary drops.
 
 - ### Results on 10,000 Samples
 
-    ![alt text](Plot/10000_Loss.png)
     **Training Loss Analysis:**</br>
+    ![alt text](Plot/10000_Loss.png)
     The training loss behavior highlights the differences between the three strategies. With **Step-LR**, the loss initially declines but soon becomes unstable, fluctuating frequently due to the rigidity of fixed learning rate schedules. In contrast, **ALR** shows a more stable loss curve compared to scenarios with fewer samples, though it still exhibits some noise from simultaneous layer updates. The **ALR-Pairwise** method demonstrates the smoothest and most gradual decline in loss, indicating its effectiveness in maintaining consistent learning even with larger training datasets.
 
-    ![alt text](Plot/10000_LR.png)
     **Learning Rate Behavior:**</br>
+    ![alt text](Plot/10000_LR.png)
     The learning rate dynamics further emphasize the advantages of adaptive strategies. **Step-LR** introduces abrupt drops at fixed intervals, which often misalign with the model’s actual learning needs, leading to inefficiencies. **ALR** improves upon this by dynamically adjusting the learning rate based on training behavior, offering better control and progression. The **ALR-Pairwise** approach refines this further, with learning rates changing gradually based on feedback from specific layer pairs, effectively balancing learning speed and stability.
 
 ## Installation
